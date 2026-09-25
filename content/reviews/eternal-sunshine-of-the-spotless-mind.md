@@ -18,7 +18,7 @@ nominations:
   - film: "Etneral Sunshine of the Spotless Mind"
     votes: 4
     winner: true
-poster: "images/posters/no-country-for-old-men.jpg"
+poster: "images/posters/eternal-sunshine-of-the-spotless-mind.jpg"
 draft: false                 # must be false or the page stays hidden
 ---
 
