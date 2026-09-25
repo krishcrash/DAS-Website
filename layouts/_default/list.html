@@ -1,0 +1,14 @@
+{{ define "main" }}
+<header class="pagehead wrap">
+  <p class="pagehead__kicker eyebrow eyebrow--red">{{ .Params.kicker | default .Section | humanize }}</p>
+  <h1 class="pagehead__title">{{ .Title }}</h1>
+  {{ with .Params.lead }}<p class="pagehead__lead lead">{{ . }}</p>{{ end }}
+</header>
+
+<div class="wrap stack">
+  {{ with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+  {{ range .Pages }}
+    <p><a href="{{ .RelPermalink }}">{{ .Title }}</a></p>
+  {{ end }}
+</div>
+{{ end }}

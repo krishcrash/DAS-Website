@@ -1,0 +1,17 @@
+<footer class="endreel">
+  <div class="filmstrip filmstrip--static" aria-hidden="true"></div>
+  <div class="endreel__inner">
+    <p class="endreel__end">End of Reel</p>
+    <div class="endreel__cols">
+      <p class="endreel__blurb">{{ site.Params.description }}</p>
+      <nav class="endreel__nav" aria-label="Footer">
+        {{ range site.Menus.main }}<a href="{{ .URL }}">{{ .Name }}</a>{{ end }}
+        <a href="{{ "index.xml" | relURL }}">RSS</a>
+      </nav>
+    </div>
+    <p class="endreel__colophon">
+      <span>© {{ now.Year }} {{ site.Title }}</span>
+      <span>Scores computed from the master ledger · Built {{ now.Format "02 Jan 2006" }}</span>
+    </p>
+  </div>
+</footer>

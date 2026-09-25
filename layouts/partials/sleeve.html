@@ -1,0 +1,34 @@
+{{/* A film "sleeve": square-cropped still + title, used in crates and grids.
+     Context: dict "page" <Page> "sizes" <string> "ratio" <string> "eager" <bool> */}}
+{{ $p := .page }}
+{{ $s := partial "func/scores.html" $p }}
+{{ $ratio := .ratio | default "1 / 1" }}
+<article class="sleeve"{{ with $s }} data-rank="{{ .rank }}" data-total="{{ .total }}" data-sd="{{ .consensus.sd }}"{{ end }} data-date="{{ $p.Date.Format "2006-01-02" }}" data-nominator="{{ $p.Params.nominator }}">
+  <a class="sleeve__link" href="{{ $p.RelPermalink }}">
+    <div class="sleeve__art" data-tilt>
+      {{ partial "frame.html" (dict
+        "page" $p
+        "src" $p.Params.poster
+        "alt" ""
+        "title" $p.Title
+        "ratio" $ratio
+        "fit" "cover"
+        "focus" ($p.Params.poster_focus | default "50% 40%")
+        "sizes" (.sizes | default "(min-width: 900px) 22rem, 70vw")
+        "eager" .eager
+      ) }}
+      <span class="sleeve__glare" aria-hidden="true"></span>
+      <span class="sleeve__spine edge" aria-hidden="true">
+        {{ $p.Date.Format "Jan 2006" }}{{ with $p.Params.nominator }} · {{ . }}{{ end }}
+      </span>
+      {{ with $s }}<span class="sleeve__score" aria-hidden="true">{{ .total }}</span>{{ end }}
+    </div>
+    <div class="sleeve__meta">
+      <h3 class="sleeve__title">{{ partial "func/title-html.html" $p.Title }}</h3>
+      <p class="sleeve__sub">
+        {{ with $p.Params.director }}{{ . }}{{ end }}{{ with $p.Params.year }} · {{ . }}{{ end }}
+      </p>
+      {{ with $s }}<p class="visually-hidden">Scored {{ .total }}, ranked {{ .rank }} of {{ .rank_of }}</p>{{ end }}
+    </div>
+  </a>
+</article>

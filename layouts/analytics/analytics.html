@@ -1,0 +1,30 @@
+{{ define "main" }}
+{{ $charts := index hugo.Data "charts" }}
+{{ $overview := site.GetPage "/analytics" }}
+{{ $details := site.GetPage "/analytics/details" }}
+
+<header class="pagehead wrap">
+  <p class="pagehead__kicker eyebrow eyebrow--red">{{ .Params.kicker }}</p>
+  <h1 class="pagehead__title">{{ partial "func/title-html.html" .Title }}</h1>
+  <p class="pagehead__lead lead">{{ .Params.lead }}</p>
+  <nav class="tabs" aria-label="Analytics pages">
+    {{ range slice $overview $details }}
+      <a class="tabs__tab{{ if eq . $ }} is-active{{ end }}" href="{{ .RelPermalink }}"{{ if eq . $ }} aria-current="page"{{ end }}>{{ .Title }}</a>
+    {{ end }}
+  </nav>
+</header>
+
+<div class="plates wrap" data-plates>
+  {{ if not $charts }}
+    <p class="pending mono">Charts haven't been generated yet — run <code>py scripts/build_charts.py</code>.</p>
+  {{ end }}
+  {{ range $i, $id := .Params.charts }}
+    {{ with index $charts $id }}
+      {{ partial "chart.html" (dict "id" $id "n" (add $i 1) "chart" .) }}
+    {{ end }}
+  {{ end }}
+  {{ with $charts }}{{ with index . "_generated" }}
+    <p class="plates__stamp mono">Charts generated {{ (time .).Format "2 January 2006, 15:04" }} from the score ledger.</p>
+  {{ end }}{{ end }}
+</div>
+{{ end }}

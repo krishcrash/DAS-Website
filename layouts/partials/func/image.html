@@ -1,0 +1,16 @@
+{{/*
+  Resolve an image path to a Hugo image resource so templates can resize,
+  crop and read true dimensions (posters come in every aspect ratio).
+
+  Accepts: dict "page" <Page> "path" <string>
+  Looks in: the page bundle first, then /assets (e.g. "images/posters/midsommar.jpg").
+  Returns: the resource, or nil when missing — callers must `with` it.
+*/}}
+{{ $res := "" }}
+{{ with .path }}
+  {{ $p := strings.TrimPrefix "/" . }}
+  {{ $p = strings.TrimPrefix "assets/" $p }}
+  {{ with $.page }}{{ with .Resources.Get $p }}{{ $res = . }}{{ end }}{{ end }}
+  {{ if not $res }}{{ with resources.Get $p }}{{ $res = . }}{{ end }}{{ end }}
+{{ end }}
+{{ return $res }}

@@ -1,0 +1,41 @@
+{{/* Letterboxed hero still with the title set over its lower edge.
+     Context: dict "page" <Page> "scores" <map|nil> */}}
+{{ $p := .page }}
+{{ $s := .scores }}
+{{ $img := $p.Params.banner | default $p.Params.poster }}
+<section class="rhero" data-reveal>
+  <div class="rhero__gate">
+    <p class="rhero__edge rhero__edge--top edge" aria-hidden="true">
+      <span>DAS ▸ {{ with $s }}Reel {{ printf "%03d" (int .rank) }} of {{ .rank_of }}{{ else }}Reel ———{{ end }}</span>
+      <span class="rhero__edge-extra">{{ with $p.Params.year }}{{ . }} ▸ {{ end }}35 ▸ Safety film</span>
+    </p>
+    {{ partial "frame.html" (dict
+      "page" $p
+      "src" $img
+      "alt" (printf "Still from %s" $p.Title)
+      "title" $p.Title
+      "ratio" "2.39 / 1"
+      "tolerance" 0.45
+      "focus" ($p.Params.poster_focus | default "50% 25%")
+      "sizes" "100vw"
+      "eager" true
+      "class" "rhero__frame"
+    ) }}
+    <p class="rhero__edge rhero__edge--bottom edge" aria-hidden="true">
+      <span>{{ upper $p.File.ContentBaseName }} ▸ {{ $p.Date.Format "02.01.2006" }}</span>
+    </p>
+  </div>
+
+  <div class="rhero__titles wrap">
+    <p class="rhero__kicker eyebrow">
+      <span class="eyebrow--red">Nominated by {{ partial "func/member.html" $p.Params.nominator }}</span>
+      {{ with $p.Params.nomination_month }}<span>{{ (time (printf "%s-01" .)).Format "January 2006" }}</span>{{ end }}
+    </p>
+    <h1 class="rhero__title">{{ partial "func/title-html.html" $p.Title }}</h1>
+    <dl class="rhero__credits">
+      {{ with $p.Params.director }}<div><dt>Directed by</dt><dd>{{ . }}</dd></div>{{ end }}
+      {{ with $p.Params.year }}<div><dt>Released</dt><dd>{{ . }}</dd></div>{{ end }}
+      <div><dt>Screened</dt><dd><time datetime="{{ $p.Date.Format "2006-01-02" }}">{{ $p.Date.Format "2 January 2006" }}</time></dd></div>
+    </dl>
+  </div>
+</section>

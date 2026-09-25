@@ -1,0 +1,63 @@
+{{ define "main" }}
+{{ $guide := index hugo.Data "scoring" }}
+{{ $data := index hugo.Data "scores" }}
+{{ $max := $data.max_total }}
+
+<header class="pagehead wrap">
+  <p class="pagehead__kicker eyebrow eyebrow--red">{{ .Params.kicker }}</p>
+  <h1 class="pagehead__title">How We <em>Score</em></h1>
+  <p class="pagehead__lead lead">{{ $guide.intro }}</p>
+</header>
+
+{{/* The weight of each category: frames sized by their share of the total. */}}
+<figure class="weights wrap" aria-labelledby="weights-h">
+  <figcaption class="weights__head">
+    <h2 id="weights-h" class="eyebrow">Where the {{ $max }} points live</h2>
+  </figcaption>
+  <ol class="weights__strip">
+    {{ range $i, $m := $data.metrics }}
+      {{ $share := div $m.max $max }}
+      <li class="weights__frame{{ if lt $share 0.08 }} is-narrow{{ end }}" style="{{ printf "--w: %.4f" $share | safeCSS }}"
+          data-tip="{{ $m.label }} · {{ if eq $m.key "wildcard" }}±{{ end }}{{ $m.max }} ({{ lang.FormatNumber 0 (mul $share 100) }}% of the total)" tabindex="0">
+        <span class="weights__num mono">{{ printf "%02d" (add $i 1) }}</span>
+        <span class="weights__label">{{ $m.label }}</span>
+        <span class="weights__pts">{{ if eq $m.key "wildcard" }}±{{ end }}{{ $m.max }}</span>
+      </li>
+    {{ end }}
+  </ol>
+</figure>
+
+<section class="guide wrap" aria-label="The eight categories">
+  <ol class="guide__grid">
+    {{ range $i, $m := $data.metrics }}
+      {{ $g := index $guide.categories $m.key }}
+      {{ $wild := eq $m.key "wildcard" }}
+      <li class="cat{{ if $g.binary }} cat--binary{{ end }}" id="{{ $m.key }}" data-reveal>
+        <p class="cat__num mono">{{ printf "%02d" (add $i 1) }}</p>
+        <h2 class="cat__name">{{ $m.label }}</h2>
+        <p class="cat__range">{{ $g.range }}</p>
+        <p class="cat__desc">{{ $g.description }}</p>
+        {{ with $m.society_mean }}
+          <div class="cat__habit">
+            {{ if $g.binary }}
+              <p><strong>{{ lang.FormatNumber 0 $m.share_max }}%</strong> of scorecards say yes.</p>
+            {{ else }}
+              {{ $lo := cond $wild (mul -1.0 $m.max) 0.0 }}
+              {{ $span := sub $m.max $lo }}
+              <div class="cat__meter" role="img" aria-label="Society average {{ . }} of {{ $m.max }}">
+                <span style="{{ printf "--p: %.4f; --z: %.4f" (div (sub . $lo) $span) (div (sub 0.0 $lo) $span) | safeCSS }}"></span>
+              </div>
+              <p>Society average <strong>{{ if and $wild (gt . 0) }}+{{ end }}{{ . }}</strong> · full marks {{ lang.FormatNumber 0 $m.share_max }}% of the time</p>
+            {{ end }}
+          </div>
+        {{ end }}
+      </li>
+    {{ end }}
+  </ol>
+  <p class="guide__total">
+    <span class="mono">Best possible</span>
+    <strong>{{ $max }}</strong>
+    <a class="btn btn--ghost" href="{{ "submit.html" | relURL }}">Submit your scores</a>
+  </p>
+</section>
+{{ end }}

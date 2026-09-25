@@ -1,0 +1,11 @@
+{{ define "main" }}
+<header class="pagehead wrap">
+  {{ with .Params.kicker }}<p class="pagehead__kicker eyebrow eyebrow--red">{{ . }}</p>{{ end }}
+  <h1 class="pagehead__title">{{ .Title }}</h1>
+  {{ with .Params.lead }}<p class="pagehead__lead lead">{{ . }}</p>{{ end }}
+</header>
+
+<div class="wrap">
+  <div class="prose">{{ .Content }}</div>
+</div>
+{{ end }}

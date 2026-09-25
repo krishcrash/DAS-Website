@@ -1,0 +1,38 @@
+{{/*
+  Record crate: a horizontal, snap-scrolling row of sleeves that lean like
+  media being flipped through (JS adds the per-card rotation from scroll
+  position; without JS it's a plain swipeable row).
+
+  Context: dict
+    pages   Pages     what to show, already sorted
+    id      string    unique id for aria wiring
+    title   string    heading
+    kicker  string    small label above heading
+    more    Page      optional "see all" link target
+*/}}
+{{ $id := .id | default "crate" }}
+<section class="crate" aria-labelledby="{{ $id }}-h" data-crate>
+  <header class="crate__head wrap">
+    <div>
+      {{ with .kicker }}<p class="eyebrow eyebrow--red">{{ . }}</p>{{ end }}
+      <h2 id="{{ $id }}-h" class="crate__title">{{ .title }}</h2>
+    </div>
+    <div class="crate__controls">
+      <p class="crate__counter mono" aria-hidden="true"><span data-crate-index>01</span> / {{ printf "%02d" (len .pages) }}</p>
+      <button class="crate__btn" type="button" data-crate-prev aria-label="Previous films" aria-controls="{{ $id }}-track">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+      <button class="crate__btn" type="button" data-crate-next aria-label="Next films" aria-controls="{{ $id }}-track">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+      {{ with .more }}<a class="crate__more" href="{{ .RelPermalink }}">All films</a>{{ end }}
+    </div>
+  </header>
+  <div class="crate__track" id="{{ $id }}-track" tabindex="0" role="region" aria-label="{{ .title }} — scroll horizontally" data-crate-track>
+    {{ range $i, $p := .pages }}
+      <div class="crate__slot" data-crate-item>
+        {{ partial "sleeve.html" (dict "page" $p "eager" (lt $i 3)) }}
+      </div>
+    {{ end }}
+  </div>
+</section>

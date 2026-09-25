@@ -1,0 +1,52 @@
+{{/* Every reviewer's scorecard. Doubles as the accessible table view for
+     the breakdown chart. Cell tint = score as a share of the category max.
+     Context: dict "scores" <map> "metrics" <slice> "max" <float> */}}
+{{ $s := .scores }}
+{{ $metrics := .metrics }}
+<section class="ledger" aria-labelledby="ledger-h">
+  <div class="ledger__head">
+    <h2 id="ledger-h" class="t-h3">The ledger</h2>
+    <p class="ledger__hint mono" aria-hidden="true">Swipe ⇆</p>
+  </div>
+  <div class="ledger__scroll" tabindex="0" role="region" aria-labelledby="ledger-h">
+    <table class="ledger__table">
+      <thead>
+        <tr>
+          <th scope="col">Reviewer</th>
+          {{ range $metrics }}<th scope="col" title="Max {{ .max }}">{{ .label }}</th>{{ end }}
+          <th scope="col" class="is-total">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ range $s.reviewers }}
+          {{ $r := . }}
+          <tr>
+            <th scope="row">
+              {{ .name }}
+              {{ if eq .user $s.fan.user }}<span class="ledger__tag">Fan</span>{{ end }}
+              {{ if eq .user $s.cynic.user }}<span class="ledger__tag ledger__tag--cold">Cynic</span>{{ end }}
+            </th>
+            {{ range $metrics }}
+              {{ $v := index $r.scores .key }}
+              {{ $t := math.Max 0 (math.Min 1 (div (math.Abs $v) .max)) }}
+              <td style="{{ printf "--t: %.3f" $t | safeCSS }}"{{ if lt $v 0 }} class="is-neg"{{ end }}>{{ $v }}</td>
+            {{ end }}
+            <td class="is-total">{{ .total }}</td>
+          </tr>
+        {{ end }}
+      </tbody>
+      <tfoot>
+        <tr class="is-mean">
+          <th scope="row">Mean</th>
+          {{ range $metrics }}<td>{{ index $s.means .key }}</td>{{ end }}
+          <td class="is-total">{{ $s.total }}</td>
+        </tr>
+        <tr class="is-max">
+          <th scope="row">Max</th>
+          {{ range $metrics }}<td>{{ if eq .key "wildcard" }}±{{ end }}{{ .max }}</td>{{ end }}
+          <td class="is-total">{{ $.max }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</section>

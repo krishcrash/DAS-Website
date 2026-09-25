@@ -1,0 +1,202 @@
+/* ==========================================================================
+   Atmosphere: grain, light leaks, gate flicker, sprocket rails, letterbox.
+   Everything here is decorative, fixed and non-interactive.
+   ========================================================================== */
+
+.atmos {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Light leaks — warm bleed at the edges, as if the can was cracked open */
+.atmos__leak {
+  position: absolute;
+  width: 70vmax;
+  height: 70vmax;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.16;
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+.atmos__leak--amber {
+  top: -38vmax;
+  right: -30vmax;
+  background: radial-gradient(circle at 40% 60%, var(--amber) 0%, rgba(240, 164, 58, 0.35) 35%, transparent 70%);
+  animation: leak-drift-a 26s var(--ease-in-out) infinite alternate;
+}
+.atmos__leak--red {
+  bottom: -45vmax;
+  left: -35vmax;
+  opacity: 0.12;
+  background: radial-gradient(circle at 60% 40%, var(--safelight) 0%, rgba(226, 65, 44, 0.3) 40%, transparent 70%);
+  animation: leak-drift-b 34s var(--ease-in-out) infinite alternate;
+}
+
+@keyframes leak-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-8vmax, 6vmax, 0) scale(1.15); }
+}
+@keyframes leak-drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1.1); }
+  to   { transform: translate3d(10vmax, -6vmax, 0) scale(0.95); }
+}
+
+/* Film grain — SVG turbulence, jittered in steps so it reads as grain, not swim */
+.atmos__grain {
+  position: absolute;
+  inset: -50%;
+  opacity: 0.075;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.9s steps(6) infinite;
+}
+@keyframes grain {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-3%, 2%); }
+  40%  { transform: translate(2%, -4%); }
+  60%  { transform: translate(-4%, -1%); }
+  80%  { transform: translate(3%, 3%); }
+  100% { transform: translate(-1%, 4%); }
+}
+
+/* Gate flicker — barely perceptible luminance wobble */
+.atmos__flicker {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, rgba(255, 240, 215, 0.035), transparent 65%);
+  animation: flicker 5s steps(1) infinite;
+}
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  12% { opacity: 0.7; }
+  13% { opacity: 1; }
+  47% { opacity: 0.85; }
+  48% { opacity: 1; }
+  81% { opacity: 0.75; }
+  82% { opacity: 1; }
+}
+
+/* ---- Sprocket rails ------------------------------------------------------ */
+
+.rail {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .rail {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    z-index: 40;
+    width: var(--rail-w);
+    background: var(--ink-1);
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .rail--left  { left: 0;  border-right: 1px solid var(--ink-3); }
+  .rail--right { right: 0; border-left: 1px solid var(--ink-3); }
+
+  /* Perforations: light punched through the stock. Scroll-linked via --perf-offset (main.js). */
+  .rail::before {
+    content: "";
+    position: absolute;
+    inset: -24px 0;
+    background: linear-gradient(180deg, rgba(247, 199, 127, 0.14), rgba(237, 229, 214, 0.08));
+    -webkit-mask: var(--perf-v) center top / 20px 24px repeat-y;
+            mask: var(--perf-v) center top / 20px 24px repeat-y;
+    transform: translateY(var(--perf-offset, 0px));
+  }
+
+  /* Latent edge print, running the length of the stock */
+  .rail__print {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max-content;
+    font-family: var(--f-mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.3em;
+    color: var(--amber);
+    opacity: 0.32;
+    white-space: nowrap;
+    transform: translate(-50%, -50%) rotate(-90deg) translateY(calc(var(--rail-w) * 0.42));
+  }
+  .rail--right .rail__print {
+    transform: translate(-50%, -50%) rotate(90deg) translateY(calc(var(--rail-w) * 0.42));
+  }
+}
+
+/* ---- Horizontal filmstrip (dividers, footer, frame edges) ---------------- */
+
+.filmstrip {
+  position: relative;
+  height: 1.5rem;
+  background: var(--ink-1);
+  border-block: 1px solid var(--ink-3);
+  overflow: hidden;
+}
+.filmstrip::before {
+  content: "";
+  position: absolute;
+  inset: 0 -24px;
+  background: rgba(237, 229, 214, 0.1);
+  -webkit-mask: var(--perf) left center / 24px 20px repeat-x;
+          mask: var(--perf) left center / 24px 20px repeat-x;
+  animation: strip-run 1.6s linear infinite;
+}
+.filmstrip--static::before { animation: none; }
+
+@keyframes strip-run {
+  to { transform: translateX(24px); }
+}
+
+/* ---- Letterbox transition ------------------------------------------------ */
+
+.letterbox {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  pointer-events: none;
+}
+.letterbox__bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50.5%;
+  background: #000;
+  transform: scaleY(0);
+}
+.letterbox__bar--top    { top: 0;    transform-origin: top; }
+.letterbox__bar--bottom { bottom: 0; transform-origin: bottom; }
+
+/* On arrival the frame opens from a closed gate to full aperture */
+@media (prefers-reduced-motion: no-preference) {
+  .letterbox__bar {
+    animation: gate-open 760ms var(--ease-shutter) 60ms both;
+  }
+  html.is-leaving .letterbox__bar {
+    animation: gate-close 380ms var(--ease-shutter) both;
+  }
+}
+@keyframes gate-open {
+  from { transform: scaleY(1); }
+  to   { transform: scaleY(0); }
+}
+@keyframes gate-close {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* ---- Reduced motion: keep the look, drop the movement -------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .atmos__leak,
+  .atmos__grain,
+  .atmos__flicker,
+  .filmstrip::before { animation: none; }
+  .rail::before { transform: none; }
+}

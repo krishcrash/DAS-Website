@@ -1,0 +1,22 @@
+{{/* Decorative, fixed-position layers. All aria-hidden and pointer-events: none. */}}
+<div class="atmos" aria-hidden="true">
+  <div class="atmos__leak atmos__leak--amber"></div>
+  <div class="atmos__leak atmos__leak--red"></div>
+  <div class="atmos__grain"></div>
+  <div class="atmos__flicker"></div>
+</div>
+
+{{/* Sprocket rails down both edges on wide screens. Edge print repeats like
+     latent-image text burned into the film stock between perforations. */}}
+<div class="rail rail--left" aria-hidden="true">
+  <span class="rail__print">{{ range seq 6 }}{{ site.Params.edgePrint }} ▸ {{ printf "%02d" . }}&emsp;{{ end }}</span>
+</div>
+<div class="rail rail--right" aria-hidden="true">
+  <span class="rail__print">{{ range seq 6 }}{{ printf "%02d" . }} ◂ {{ site.Params.edgePrint }}&emsp;{{ end }}</span>
+</div>
+
+{{/* Letterbox bars: open on load, close on internal navigation (main.js). */}}
+<div class="letterbox" aria-hidden="true">
+  <div class="letterbox__bar letterbox__bar--top"></div>
+  <div class="letterbox__bar letterbox__bar--bottom"></div>
+</div>

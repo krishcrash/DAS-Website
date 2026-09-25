@@ -1,0 +1,127 @@
+{{ define "head" }}<meta name="robots" content="noindex, nofollow">{{ end }}
+{{ define "main" }}
+{{ $cfg := site.Params.submit }}
+{{ $data := index hugo.Data "scores" }}
+{{ $reviews := first 24 (where site.RegularPages "Section" "reviews").ByDate.Reverse }}
+
+<header class="pagehead wrap">
+  <p class="pagehead__kicker eyebrow eyebrow--red">{{ .Params.kicker }}</p>
+  <h1 class="pagehead__title">Submit <em>Scores</em></h1>
+  <p class="pagehead__lead lead">{{ .Params.lead }}</p>
+</header>
+
+<div class="booth wrap"
+     data-submit
+     data-hash="{{ $cfg.passwordHash }}"
+     data-endpoint="{{ $cfg.formspree }}"
+     {{ if hugo.IsServer }}data-dev{{ end }}>
+
+  {{/* ---- The gate ------------------------------------------------------- */}}
+  <section class="gate" data-gate aria-labelledby="gate-h">
+    <div class="gate__frame">
+      <p class="gate__edge edge" aria-hidden="true"><span>Projection booth</span><span>Authorised crew only</span></p>
+      <h2 id="gate-h" class="gate__title">The booth is <em>locked</em></h2>
+      <p class="gate__copy">Enter the society password to open the scorecard.</p>
+      {{ if $cfg.passwordHash }}
+        <form class="gate__form" data-gate-form novalidate>
+          <label class="visually-hidden" for="gate-pw">Society password</label>
+          <input class="field__input gate__input" id="gate-pw" type="password" autocomplete="current-password" placeholder="Password" required>
+          <button class="btn btn--red" type="submit">Unlock</button>
+        </form>
+        <p class="gate__error" data-gate-error role="alert" hidden>That's not it. Try again.</p>
+      {{ else }}
+        <p class="gate__error">No password is configured yet — set <code>params.submit.passwordHash</code> in <code>hugo.toml</code> (run <code>py scripts/hash_password.py</code>).</p>
+        {{ if hugo.IsServer }}<button class="btn btn--ghost" type="button" data-gate-dev>Open anyway (local preview only)</button>{{ end }}
+      {{ end }}
+    </div>
+  </section>
+
+  {{/* ---- The scorecard (inserted only after unlocking) ----------------- */}}
+  <template data-form-template>
+    <form class="scorecard" data-score-form novalidate>
+      <input type="text" name="_gotcha" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <fieldset class="scorecard__who">
+        <legend class="eyebrow">The card</legend>
+        <div class="field">
+          <label class="field__label" for="f-user">Your initials</label>
+          <select class="field__input" id="f-user" name="initials" required>
+            <option value="" selected disabled>Choose…</option>
+            {{ range $code, $m := $data.members }}{{ if $m.active }}
+              <option value="{{ $code }}" data-name="{{ $m.name }}">{{ $code }} — {{ $m.name }}</option>
+            {{ end }}{{ end }}
+          </select>
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-film">Film</label>
+          <input class="field__input" id="f-film" name="film" type="text" list="films" autocomplete="off" required placeholder="e.g. The Holy Mountain">
+          <datalist id="films">{{ range $reviews }}<option value="{{ .Params.score_key | default .Title }}">{{ end }}</datalist>
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-date">Date watched</label>
+          <input class="field__input" id="f-date" name="date" type="date" required data-today>
+        </div>
+      </fieldset>
+
+      <fieldset class="scorecard__scores">
+        <legend class="eyebrow">The scores</legend>
+        <p class="scorecard__guide">Not sure what a category covers? Read <a href="{{ "scoring/" | relURL }}" target="_blank" rel="noopener">how we score</a>.</p>
+        <ol class="scorecard__list">
+          {{ range $i, $m := $data.metrics }}
+            {{ $wild := eq $m.key "wildcard" }}
+            {{ $min := cond $wild (mul -1.0 $m.max) 0.0 }}
+            {{ $g := index (index hugo.Data "scoring").categories $m.key }}
+            <li class="dial{{ if $g.binary }} dial--binary{{ end }}" data-dial data-key="{{ $m.key }}" data-order="{{ add $i 1 }}">
+              <div class="dial__head">
+                {{ if $g.binary }}
+                  <span class="dial__label" id="f-{{ $m.key }}-l">
+                    <span class="dial__num mono">{{ printf "%02d" (add $i 1) }}</span>
+                    {{ $m.label }}
+                  </span>
+                {{ else }}
+                  <label class="dial__label" for="f-{{ $m.key }}">
+                    <span class="dial__num mono">{{ printf "%02d" (add $i 1) }}</span>
+                    {{ $m.label }}
+                  </label>
+                {{ end }}
+                <span class="dial__range mono">{{ with $g.range }}{{ . }}{{ else }}0 – {{ $m.max }}{{ end }}</span>
+              </div>
+              {{ with $g.description }}<p class="dial__hint" id="f-{{ $m.key }}-h">{{ . }}</p>{{ end }}
+              {{ if $g.binary }}
+                {{/* Enjoyable is all-or-nothing: 0 or the full marks. */}}
+                <div class="dial__toggle" role="radiogroup" aria-labelledby="f-{{ $m.key }}-l" aria-describedby="f-{{ $m.key }}-h">
+                  <label class="dial__choice">
+                    <input type="radio" name="{{ $m.key }}" value="0" required data-dial-choice>
+                    <span><b>0</b> Didn't enjoy it</span>
+                  </label>
+                  <label class="dial__choice">
+                    <input type="radio" name="{{ $m.key }}" value="{{ $m.max }}" data-dial-choice>
+                    <span><b>{{ $m.max }}</b> Enjoyed it</span>
+                  </label>
+                </div>
+              {{ else }}
+                <div class="dial__controls">
+                  <input class="dial__slider" type="range" min="{{ $min }}" max="{{ $m.max }}" step="0.05" value="{{ cond $wild 0 $min }}" aria-hidden="true" tabindex="-1" data-dial-slider>
+                  <input class="field__input dial__value" id="f-{{ $m.key }}" name="{{ $m.key }}" type="number" inputmode="decimal"
+                         min="{{ $min }}" max="{{ $m.max }}" step="0.01" required placeholder="—" aria-describedby="f-{{ $m.key }}-h" data-dial-input>
+                </div>
+              {{ end }}
+            </li>
+          {{ end }}
+        </ol>
+      </fieldset>
+
+      <div class="scorecard__bar">
+        <p class="scorecard__total" aria-live="polite">
+          <span class="mono">Total</span>
+          <strong data-total>0</strong><span class="scorecard__max">/ {{ $data.max_total }}</span>
+        </p>
+        <button class="btn btn--red scorecard__submit" type="submit" data-submit-btn>Submit scores</button>
+      </div>
+      <p class="scorecard__status" data-status role="status"></p>
+    </form>
+  </template>
+
+  <div data-form-host></div>
+</div>
+{{ end }}

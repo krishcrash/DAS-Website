@@ -1,0 +1,174 @@
+{{ define "bodyclass" }}page--home{{ end }}
+{{ define "main" }}
+{{/*
+  Everything here is derived from content/reviews/*.md (newest by `date`)
+  and build/data/scores.json, so adding a review file updates the page.
+*/}}
+{{ $reviews := (where site.RegularPages "Section" "reviews").ByDate.Reverse }}
+{{ $data := index hugo.Data "scores" }}
+{{ $recentN := site.Params.homeRecent | default 12 }}
+
+{{/* score_key → review page, for linking ranked films back to their pages */}}
+{{ $byKey := dict }}
+{{ range $reviews }}{{ $byKey = merge $byKey (dict (.Params.score_key | default .Title) .) }}{{ end }}
+{{ $ranked := slice }}
+{{ range $k, $f := $data.films }}
+  {{ with index $byKey $k }}{{ $ranked = $ranked | append (dict "page" . "s" $f) }}{{ end }}
+{{ end }}
+{{ $byRank := sort $ranked "s.rank" }}
+
+{{ with index $reviews 0 }}
+  {{ $s := partial "func/scores.html" . }}
+  {{/* ---- Now showing ------------------------------------------------- */}}
+  <section class="marquee-hero" aria-labelledby="now-h">
+    <div class="marquee-hero__stage">
+      {{ partial "frame.html" (dict
+        "page" .
+        "src" (.Params.banner | default .Params.poster)
+        "alt" (printf "Still from %s" .Title)
+        "title" .Title
+        "ratio" "2.39 / 1"
+        "fit" "cover"
+        "focus" (.Params.poster_focus | default "50% 30%")
+        "sizes" "100vw"
+        "eager" true
+        "class" "marquee-hero__frame"
+      ) }}
+      <p class="marquee-hero__edge edge" aria-hidden="true">
+        <span>Now showing</span><span>Reel {{ printf "%03d" (len $reviews) }}</span><span>{{ .Date.Format "02.01.06" }}</span>
+      </p>
+    </div>
+
+    <div class="marquee-hero__copy wrap">
+      <p class="eyebrow eyebrow--red marquee-hero__kicker">
+        <span class="marquee-hero__dot" aria-hidden="true"></span>
+        The latest screening · {{ .Date.Format "January 2006" }}
+      </p>
+      <h1 id="now-h" class="marquee-hero__title">
+        <a href="{{ .RelPermalink }}">{{ partial "func/title-html.html" .Title }}</a>
+      </h1>
+      <div class="marquee-hero__meta">
+        <p class="marquee-hero__credit">
+          {{ with .Params.director }}<span>{{ . }}</span>{{ end }}
+          {{ with .Params.year }}<span>{{ . }}</span>{{ end }}
+          <span>Picked by {{ partial "func/member.html" .Params.nominator }}</span>
+        </p>
+        {{ with $s }}
+          <p class="marquee-hero__score">
+            <span class="marquee-hero__num">{{ lang.FormatNumber 2 .total }}</span>
+            <span class="marquee-hero__of">/ {{ $data.max_total }} · #{{ .rank }} of {{ .rank_of }} · {{ .consensus.label }}</span>
+          </p>
+        {{ end }}
+        <a class="btn btn--red" href="{{ .RelPermalink }}">Read the review <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+{{ else }}
+  <header class="pagehead wrap">
+    <h1 class="pagehead__title display">The <em>Dead</em> Auteur Society</h1>
+    <p class="pagehead__lead lead">{{ site.Params.description }}</p>
+  </header>
+{{ end }}
+
+{{/* ---- Marquee ticker ---------------------------------------------------- */}}
+{{ $tick := first $recentN $reviews }}
+{{ if $tick }}
+  <div class="ticker" aria-hidden="true">
+    {{ range seq 2 }}
+      <p class="ticker__run">
+        {{ range $tick }}
+          <span class="ticker__item">{{ .Title }}{{ with partial "func/scores.html" . }} <b>{{ .total }}</b>{{ end }}</span>
+        {{ end }}
+      </p>
+    {{ end }}
+  </div>
+{{ end }}
+
+{{/* ---- Recent crate (everything after the hero film) --------------------- */}}
+{{ with after 1 (first (add $recentN 1) $reviews) }}
+  {{ partial "crate.html" (dict "pages" . "id" "recent" "kicker" "Recently screened" "title" "The crate" "more" (site.GetPage "/reviews")) }}
+{{ end }}
+
+{{/* ---- The society in numbers --------------------------------------------- */}}
+{{ if $byRank }}
+  {{ $sum := 0.0 }}{{ $logs := 0 }}
+  {{ range $byRank }}{{ $sum = add $sum .s.total }}{{ $logs = add $logs .s.reviewer_count }}{{ end }}
+  {{ $active := 0 }}{{ range $data.members }}{{ if .active }}{{ $active = add $active 1 }}{{ end }}{{ end }}
+  {{ $top := index $byRank 0 }}
+  {{ $divisive := index (sort $byRank "s.consensus.sd" "desc") 0 }}
+  <section class="numbers wrap section" aria-labelledby="numbers-h">
+    <div class="numbers__head">
+      <p class="eyebrow eyebrow--red">Since {{ (index $reviews.Reverse 0).Date.Format "January 2006" }}</p>
+      <h2 id="numbers-h" class="numbers__title">The society<br><em>in numbers</em></h2>
+    </div>
+    <dl class="numbers__grid">
+      <div class="stat" data-reveal><dt>Films screened</dt><dd class="stat__value">{{ len $reviews }}</dd></div>
+      <div class="stat" data-reveal><dt>Scorecards filed</dt><dd class="stat__value">{{ $logs }}</dd></div>
+      <div class="stat" data-reveal><dt>Active members</dt><dd class="stat__value">{{ $active }}</dd></div>
+      <div class="stat" data-reveal><dt>Society mean</dt><dd class="stat__value">{{ lang.FormatNumber 2 (div $sum (len $byRank)) }}<small> / {{ $data.max_total }}</small></dd></div>
+      <div class="stat stat--wide" data-reveal>
+        <dt>Highest rated</dt>
+        <dd><a class="stat__film" href="{{ $top.page.RelPermalink }}">{{ $top.page.Title }}</a><span class="stat__note">{{ $top.s.total }} / {{ $data.max_total }}</span></dd>
+      </div>
+      <div class="stat stat--wide" data-reveal>
+        <dt>Most divisive</dt>
+        <dd><a class="stat__film" href="{{ $divisive.page.RelPermalink }}">{{ $divisive.page.Title }}</a><span class="stat__note"><span class="nocase">σ</span> {{ $divisive.s.consensus.sd }} between reviewers</span></dd>
+      </div>
+    </dl>
+  </section>
+
+  {{/* ---- The canon & the pit ----------------------------------------------- */}}
+  <section class="standings wrap" aria-label="Standings">
+    <div class="standings__col standings__col--canon">
+      <p class="eyebrow eyebrow--amber">All-time top five</p>
+      <h2 class="standings__title">The <em>Canon</em></h2>
+      <ol class="standings__list">
+        {{ range first 5 $byRank }}
+          <li class="standing" data-reveal>
+            <a class="standing__link" href="{{ .page.RelPermalink }}">
+              <span class="standing__rank" aria-hidden="true">{{ int .s.rank }}</span>
+              <span class="standing__body">
+                <span class="standing__title">{{ partial "func/title-html.html" .page.Title }}</span>
+                <span class="standing__sub">{{ with .page.Params.director }}{{ . }} · {{ end }}{{ .page.Date.Format "Jan 2006" }}</span>
+              </span>
+              <span class="standing__score">{{ .s.total }}</span>
+            </a>
+          </li>
+        {{ end }}
+      </ol>
+    </div>
+    <div class="standings__col standings__col--pit">
+      <p class="eyebrow">The bottom three</p>
+      <h2 class="standings__title">The <em>Pit</em></h2>
+      <ol class="standings__list">
+        {{ range last 3 $byRank }}
+          <li class="standing" data-reveal>
+            <a class="standing__link" href="{{ .page.RelPermalink }}">
+              <span class="standing__rank" aria-hidden="true">{{ int .s.rank }}</span>
+              <span class="standing__body">
+                <span class="standing__title">{{ partial "func/title-html.html" .page.Title }}</span>
+                <span class="standing__sub">{{ with .page.Params.director }}{{ . }} · {{ end }}{{ .page.Date.Format "Jan 2006" }}</span>
+              </span>
+              <span class="standing__score">{{ .s.total }}</span>
+            </a>
+          </li>
+        {{ end }}
+      </ol>
+    </div>
+  </section>
+{{ end }}
+
+{{/* ---- Calls to action --------------------------------------------------- */}}
+<section class="cta wrap section" aria-label="Get involved">
+  <a class="cta__card cta__card--nominate" href="{{ "submit.html" | relURL }}" data-tilt>
+    <span class="eyebrow eyebrow--red">Members only</span>
+    <span class="cta__title">Submit your <em>scores</em></span>
+    <span class="cta__go" aria-hidden="true">→</span>
+  </a>
+  <a class="cta__card" href="{{ "analytics/" | relURL }}" data-tilt>
+    <span class="eyebrow eyebrow--amber">The numbers</span>
+    <span class="cta__title">Who's generous, who's <em>cruel</em></span>
+    <span class="cta__go" aria-hidden="true">→</span>
+  </a>
+</section>
+{{ end }}

@@ -1,0 +1,142 @@
+/* ==========================================================================
+   Archive (/reviews/)
+   ========================================================================== */
+
+.archive__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4) var(--s-7);
+  margin: var(--s-6) 0 0;
+}
+.archive__stats div { display: grid; gap: 0.2rem; }
+.archive__stats dt {
+  font-family: var(--f-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bone-3);
+}
+.archive__stats dd {
+  margin: 0;
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.6rem);
+  font-weight: 800;
+  font-variation-settings: "wdth" 110;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.archive__stats small { font-size: 0.45em; font-weight: 400; color: var(--bone-3); letter-spacing: 0; }
+
+/* ---- Toolbar -------------------------------------------------------------- */
+
+.archive__toolbar {
+  position: sticky;
+  top: var(--masthead-h);
+  z-index: 20;
+  display: grid;
+  gap: var(--s-2);
+  margin-inline: calc(-1 * var(--gutter));
+  padding: var(--s-3) var(--gutter);
+  background: rgba(11, 10, 9, 0.88);
+  -webkit-backdrop-filter: blur(12px);
+          backdrop-filter: blur(12px);
+  border-block: 1px solid var(--ink-3);
+}
+.archive__group {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /* keep chips reachable to the edge on phones */
+  margin-inline: calc(-1 * var(--gutter));
+  padding-inline: var(--gutter);
+}
+.archive__group::-webkit-scrollbar { display: none; }
+.archive__label {
+  flex: 0 0 auto;
+  width: 5.5rem;
+  color: var(--bone-3);
+}
+.archive__status {
+  min-height: 1em;
+  color: var(--bone-3);
+}
+
+.chip {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 0.35rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--ink-4);
+  border-radius: 999px;
+  font-size: var(--t-small);
+  font-weight: 600;
+  font-variation-settings: "wdth" 80;
+  color: var(--bone-2);
+  white-space: nowrap;
+  transition: background-color var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast);
+}
+.chip:hover { border-color: var(--bone-2); color: var(--bone); }
+.chip[aria-pressed="true"] {
+  background: var(--bone);
+  border-color: var(--bone);
+  color: var(--ink-0);
+}
+
+@media (min-width: 900px) {
+  .archive__toolbar { grid-template-columns: auto 1fr; align-items: center; column-gap: var(--s-6); }
+  .archive__status { grid-column: 1 / -1; }
+  .archive__group { margin-inline: 0; padding-inline: 0; flex-wrap: wrap; overflow: visible; }
+}
+
+/* ---- Grid: squares + wide features, alternating sides -------------------- */
+
+.archive__grid {
+  --col-gap: var(--s-4);
+  /* width of one square sleeve, so wide features can match its height exactly */
+  --sq: calc((100cqw - var(--col-gap)) / 2);
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row dense;
+  gap: var(--s-6) var(--col-gap);
+  padding-top: var(--s-6);
+}
+.archive__cell.is-feature { grid-column: span 2; }
+.archive__cell.is-feature .frame { aspect-ratio: 2 / 1; }
+@supports (width: 1cqw) {
+  .archive__cell.is-feature .frame { aspect-ratio: auto; height: var(--sq); }
+}
+.archive__cell.is-feature .sleeve__title { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.6rem); }
+
+@media (min-width: 700px) {
+  .archive__grid {
+    --col-gap: clamp(1rem, 2vw, 2rem);
+    --sq: calc((100cqw - 2 * var(--col-gap)) / 3);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    row-gap: var(--s-7);
+  }
+  .archive__cell { grid-column: span 2; }
+  .archive__cell.is-feature { grid-column: span 4; }
+}
+
+.archive__year {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  margin-top: var(--s-6);
+  padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--ink-3);
+  font-size: clamp(2.6rem, 1.8rem + 4vw, 5.5rem);
+  font-style: italic;
+  font-weight: 400;
+}
+.archive__year:first-child { margin-top: 0; }
+.archive__year .mono { font-style: normal; }
+
+@media (max-width: 480px) {
+  .archive__grid .sleeve__sub { display: none; }
+}

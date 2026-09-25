@@ -1,0 +1,34 @@
+{{/*
+  One analytics "plate". The chart spec (Plotly figure + views) is embedded
+  as JSON; assets/js/analytics.js renders it when it scrolls near view,
+  builds the view controls and keeps the data table in sync.
+  Context: dict "id" "n" "chart"
+*/}}
+{{ $c := .chart }}
+<figure class="plate{{ with $c.kind }} plate--{{ . }}{{ end }}" id="{{ .id }}" data-chart aria-labelledby="{{ .id }}-t">
+  <figcaption class="plate__head">
+    <p class="plate__fig mono">Fig. {{ printf "%02d" .n }}</p>
+    <h2 class="plate__title" id="{{ .id }}-t">{{ $c.title }}</h2>
+    <p class="plate__note">{{ $c.note }}</p>
+  </figcaption>
+
+  {{ if $c.views }}
+    <div class="plate__controls" data-chart-controls data-label="{{ $c.control | default "View" }}"></div>
+  {{ end }}
+  {{ with $c.legend }}
+    <p class="plate__legend" aria-hidden="true">
+      {{ range . }}<span><i style="{{ printf "background: %s" .color | safeCSS }}"></i>{{ .label }}</span>{{ end }}
+    </p>
+  {{ end }}
+
+  <div class="plate__canvas" data-chart-canvas role="img" aria-label="{{ $c.title }}: {{ $c.note }}">
+    <p class="plate__loading mono">Loading chart…</p>
+  </div>
+
+  <details class="plate__table">
+    <summary>Show the numbers</summary>
+    <div class="plate__table-scroll" data-chart-table></div>
+  </details>
+
+  <script type="application/json" data-chart-spec>{{ $c | jsonify | safeJS }}</script>
+</figure>

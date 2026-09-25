@@ -1,0 +1,95 @@
+/* ==========================================================================
+   Dead Auteur Society — design tokens
+   Darkroom palette: base stock, bone-white print, safelight red, projector amber.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* Stock */
+  --ink-0: #0b0a09;          /* page ground: unexposed leader */
+  --ink-1: #12100e;          /* raised surface */
+  --ink-2: #1b1815;          /* card / well */
+  --ink-3: #2a2521;          /* hairlines on dark */
+  --ink-4: #4a423b;          /* muted UI */
+
+  /* Print */
+  --bone:   #ede5d6;         /* primary text */
+  --bone-2: #bdb3a2;         /* secondary text */
+  --bone-3: #8a8174;         /* tertiary / metadata */
+
+  /* Light */
+  --safelight: #e2412c;      /* darkroom red — primary accent */
+  --safelight-deep: #9c2215;
+  --amber: #f0a43a;          /* projector bulb / light leak */
+  --amber-soft: #f7c77f;
+  --cyan-cast: #6fb3b8;      /* rare cool counterpoint */
+
+  /* Data marks — validated as a pair on --ink-0 (OKLCH band, chroma floor,
+     CVD + normal-vision separation, 3:1 contrast). Use these for charts,
+     not the UI amber/cyan above. */
+  --chart-warm: #c87f1e;
+  --chart-warm-rgb: 200, 127, 30;
+  --chart-cool: #4a9cc9;
+  --chart-cool-rgb: 74, 156, 201;
+
+  /* Type families */
+  --f-display: "Bodoni Moda", "Didot", "Bodoni 72", "Times New Roman", serif;
+  --f-body: "Archivo", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  /* Fluid type scale (min @ 360px → max @ 1440px) */
+  --t-micro:  clamp(0.66rem, 0.63rem + 0.12vw, 0.74rem);
+  --t-small:  clamp(0.8rem, 0.77rem + 0.14vw, 0.9rem);
+  --t-body:   clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --t-lead:   clamp(1.15rem, 1.05rem + 0.5vw, 1.45rem);
+  --t-h3:     clamp(1.4rem, 1.2rem + 0.9vw, 2rem);
+  --t-h2:     clamp(2rem, 1.5rem + 2.3vw, 3.6rem);
+  --t-h1:     clamp(2.9rem, 1.8rem + 5.2vw, 7.5rem);
+  --t-mega:   clamp(3.6rem, 1.6rem + 9.5vw, 12rem);
+
+  /* Space */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4.5rem;
+  --s-9: clamp(4rem, 2.5rem + 6vw, 8rem);
+
+  /* Layout */
+  --gutter: max(1rem, env(safe-area-inset-left, 0px), 4vw);
+  --rail-w: 0px;                         /* sprocket rails switch on at ≥1100px */
+  --measure: 38rem;                      /* comfortable reading line */
+  --max-w: 92rem;
+  --masthead-h: 4.25rem;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-shutter: cubic-bezier(0.83, 0, 0.17, 1);
+  --dur-fast: 180ms;
+  --dur-med: 420ms;
+  --dur-slow: 900ms;
+
+  /* Aspect ratios we frame into */
+  --ar-poster: 2 / 3;
+  --ar-academy: 1.375 / 1;
+  --ar-flat: 1.85 / 1;
+  --ar-scope: 2.39 / 1;
+  --ar-70mm: 2.2 / 1;
+
+  /* Sprocket perforation (Kodak Standard-ish proportions), used as a mask */
+  --perf: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='20'%3E%3Crect x='5' y='5' width='14' height='10' rx='2.2' fill='%23000'/%3E%3C/svg%3E");
+  --perf-v: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='24'%3E%3Crect x='5' y='5' width='10' height='14' rx='2.2' fill='%23000'/%3E%3C/svg%3E");
+}
+
+@media (min-width: 1100px) {
+  :root { --rail-w: 2.25rem; --masthead-h: 5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-fast: 0ms; --dur-med: 0ms; --dur-slow: 0ms; }
+}

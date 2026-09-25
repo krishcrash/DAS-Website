@@ -1,0 +1,18 @@
+{{/* The verdict: society mean total, as a hero figure + meter.
+     Context: dict "scores" <map> "max" <float> */}}
+{{ $s := .scores }}
+{{ $max := .max }}
+<section class="verdict" aria-labelledby="verdict-h" data-reveal>
+  <h2 id="verdict-h" class="eyebrow">The verdict</h2>
+  <p class="verdict__figure">
+    <span class="verdict__value">{{ lang.FormatNumber 2 $s.total }}</span>
+    <span class="verdict__max">/ {{ $max }}</span>
+  </p>
+  <div class="meter" role="img" aria-label="{{ $s.total_pct }}% of the maximum score">
+    <span class="meter__fill" style="{{ printf "--p: %.4f" (div $s.total_pct 100) | safeCSS }}"></span>
+  </div>
+  <p class="verdict__note">
+    Mean of {{ $s.reviewer_count }} reviewer{{ if ne $s.reviewer_count 1 }}s{{ end }} ·
+    {{ $s.total_pct }}% of a perfect score
+  </p>
+</section>

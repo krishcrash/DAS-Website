@@ -1,0 +1,85 @@
+baseURL = "https://deadauteursociety.com/"
+locale = "en-GB"
+title = "Dead Auteur Society"
+enableRobotsTXT = true
+# Keep old WordPress URLs alive: deadauteursociety.com/midsommar/ etc.
+# Reviews live at /reviews/<slug>/ and each generated review carries an
+# `aliases` entry for its legacy root-level URL.
+disableKinds = ["taxonomy", "term"]
+
+[pagination]
+  pagerSize = 24
+
+[permalinks]
+  [permalinks.page]
+    # URL = file name, so content/reviews/<name>.md is always /reviews/<name>/
+    reviews = "/reviews/:contentbasename/"
+
+[params]
+  description = "A film club for interesting films, old and new. Each month a member nominates, the society votes, and everyone scores the winner across eight categories."
+  tagline = "Monthly picks · Eight categories · One ledger"
+  # Film-stock edge print that runs along the sprocket rails.
+  edgePrint = "DEAD AUTEUR SOCIETY ▸ SAFETY FILM ▸ 35MM"
+  # How many recent reviews the home page features (hero + record crate).
+  homeRecent = 12
+
+  # Members-only score submission (/submit.html). See README → "Score submissions".
+  [params.submit]
+    # Formspree endpoint, e.g. "https://formspree.io/f/abcdwxyz". Submissions are emailed to you.
+    formspree = "https://formspree.io/f/xppwlnqe"
+    # SHA-256 of the club password (never the password itself):
+    #   py scripts/hash_password.py
+    passwordHash = "0f69109fe69bae96208ec18833afe8ee6f1c54df5dcb25f80164deddec5bf9d8"
+
+[menus]
+  [[menus.main]]
+    name = "Reviews"
+    pageRef = "/reviews"
+    weight = 10
+  [[menus.main]]
+    name = "Analytics"
+    pageRef = "/analytics"
+    weight = 20
+  [[menus.main]]
+    name = "The Details"
+    pageRef = "/analytics/details"
+    weight = 30
+  [[menus.main]]
+    name = "How We Score"
+    pageRef = "/scoring"
+    weight = 35
+  [[menus.main]]
+    name = "Submit Scores"
+    pageRef = "/submit"
+    weight = 40
+
+[markup.goldmark.renderer]
+  # Synopses migrated from WordPress may contain inline HTML.
+  unsafe = true
+
+[imaging]
+  resampleFilter = "Lanczos"
+  [imaging.webp]
+    quality = 82
+  [imaging.jpeg]
+    quality = 85
+
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML"]
+
+# Generated artefacts from the Python pipeline are mounted in alongside
+# hand-written files so they never need to be committed.
+[module]
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+  [[module.mounts]]
+    source = "build/charts"
+    target = "static/charts"
+  [[module.mounts]]
+    source = "data"
+    target = "data"
+  [[module.mounts]]
+    source = "build/data"
+    target = "data"

@@ -1,0 +1,54 @@
+{{ define "main" }}
+{{ $reviews := .RegularPages.ByDate.Reverse }}
+{{ $data := index hugo.Data "scores" }}
+{{ $sum := 0.0 }}{{ $n := 0 }}{{ $codes := slice }}
+{{ range $reviews }}
+  {{ with partial "func/scores.html" . }}{{ $sum = add $sum .total }}{{ $n = add $n 1 }}{{ end }}
+  {{ with .Params.nominator }}{{ $codes = $codes | append . }}{{ end }}
+{{ end }}
+{{ $codes = sort (uniq $codes) }}
+
+<header class="pagehead wrap">
+  <p class="pagehead__kicker eyebrow eyebrow--red">{{ .Params.kicker }}</p>
+  <h1 class="pagehead__title">The <em>Archive</em></h1>
+  <p class="pagehead__lead lead">{{ .Params.lead }}</p>
+  <dl class="archive__stats">
+    <div><dt>Films</dt><dd>{{ len $reviews }}</dd></div>
+    <div><dt>Since</dt><dd>{{ (index $reviews.Reverse 0).Date.Format "Jan 2006" }}</dd></div>
+    {{ if $n }}<div><dt>Mean score</dt><dd>{{ lang.FormatNumber 2 (div $sum $n) }}<small> / {{ $data.max_total }}</small></dd></div>{{ end }}
+  </dl>
+  <span class="pagehead__count" aria-hidden="true">{{ len $reviews }}</span>
+</header>
+
+<div class="archive wrap" data-archive>
+  <div class="archive__toolbar" role="toolbar" aria-label="Sort and filter films" hidden data-archive-toolbar>
+    <div class="archive__group" role="group" aria-label="Sort">
+      <span class="archive__label mono">Sort</span>
+      <button type="button" class="chip" aria-pressed="true" data-sort="date-desc">Newest</button>
+      <button type="button" class="chip" aria-pressed="false" data-sort="date-asc">Oldest</button>
+      <button type="button" class="chip" aria-pressed="false" data-sort="score-desc">Highest rated</button>
+      <button type="button" class="chip" aria-pressed="false" data-sort="sd-desc">Most divisive</button>
+    </div>
+    <div class="archive__group" role="group" aria-label="Filter by nominator">
+      <span class="archive__label mono">Picked by</span>
+      <button type="button" class="chip" aria-pressed="true" data-filter="">Everyone</button>
+      {{ range $codes }}
+        <button type="button" class="chip" aria-pressed="false" data-filter="{{ . }}">{{ partial "func/member.html" . }}</button>
+      {{ end }}
+    </div>
+    <p class="archive__status mono" aria-live="polite" data-archive-status></p>
+  </div>
+
+  <div class="archive__grid" data-archive-grid>
+    {{ range $reviews.GroupByDate "2006" }}
+      <h2 class="archive__year" data-archive-year><span>{{ .Key }}</span><span class="mono">{{ len .Pages }} film{{ if ne (len .Pages) 1 }}s{{ end }}</span></h2>
+      {{ range $i, $p := .Pages }}
+        {{ $feature := or (eq (mod $i 10) 0) (eq (mod $i 10) 6) }}
+        <div class="archive__cell{{ if $feature }} is-feature{{ end }}" data-archive-cell data-year="{{ $p.Date.Format "2006" }}" data-reveal>
+          {{ partial "sleeve.html" (dict "page" $p "sizes" "(min-width: 1100px) 40vw, (min-width: 700px) 50vw, 100vw") }}
+        </div>
+      {{ end }}
+    {{ end }}
+  </div>
+</div>
+{{ end }}

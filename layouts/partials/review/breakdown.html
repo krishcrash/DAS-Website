@@ -1,0 +1,53 @@
+{{/*
+  Category breakdown: one row per scoring category.
+    bar  = society mean as a share of that category's max (single series, accent)
+    dots = each reviewer's score (reviewers with the same score share a dot)
+  Wildcard runs from -max to +max, so it's drawn diverging from a zero line.
+  Every value is also in the reviewer table below (the table view).
+  Context: dict "scores" <map> "metrics" <slice>
+*/}}
+{{ $s := .scores }}
+<figure class="bd" aria-labelledby="bd-h">
+  <figcaption class="bd__head">
+    <h2 id="bd-h" class="t-h3">Category by category <a class="bd__how" href="{{ "scoring/" | relURL }}">How scoring works</a></h2>
+    <p class="bd__legend" aria-hidden="true">
+      <span><i class="bd__key bd__key--bar"></i>Society mean</span>
+      <span><i class="bd__key bd__key--dot"></i>Individual reviewer</span>
+    </p>
+  </figcaption>
+  <ol class="bd__rows">
+    {{ range .metrics }}
+      {{ $key := .key }}
+      {{ $max := .max }}
+      {{ $mean := index $s.means $key }}
+      {{ $div := eq $key "wildcard" }}
+      {{ $lo := cond $div (mul -1.0 $max) 0.0 }}
+      {{ $span := sub $max $lo }}
+      {{ $pos := math.Max 0 (math.Min 1 (div (sub $mean $lo) $span)) }}
+      {{ $zero := div (sub 0.0 $lo) $span }}
+      {{ $a := math.Min $zero $pos }}
+      {{ $b := math.Max $zero $pos }}
+
+      {{/* Group reviewers by score so coincident dots merge. */}}
+      {{ $groups := dict }}
+      {{ range $s.reviewers }}
+        {{ $k := printf "%.2f" (float (index .scores $key)) }}
+        {{ $groups = merge $groups (dict $k ((index $groups $k | default slice) | append .name)) }}
+      {{ end }}
+
+      <li class="bd__row{{ if $div }} bd__row--div{{ if lt $mean 0 }} is-neg{{ end }}{{ end }}" data-reveal>
+        <span class="bd__label">{{ .label }}</span>
+        <span class="bd__track" style="{{ printf "--a: %.4f; --b: %.4f; --z: %.4f" $a $b $zero | safeCSS }}">
+          <span class="bd__fill"></span>
+          {{ range $k, $names := $groups }}
+            {{ $x := math.Max 0 (math.Min 1 (div (sub (float $k) $lo) $span)) }}
+            <span class="bd__dot{{ if gt (len $names) 1 }} bd__dot--multi{{ end }}"
+                  style="{{ printf "--x: %.4f; --n: %d" $x (len $names) | safeCSS }}"
+                  data-tip="{{ delimit $names ", " }} · {{ lang.FormatNumber 2 (float $k) }}"></span>
+          {{ end }}
+        </span>
+        <span class="bd__value">{{ if and $div (gt $mean 0) }}+{{ end }}{{ $mean }}<span class="bd__of"> {{ if $div }}±{{ else }}/ {{ end }}{{ $max }}</span></span>
+      </li>
+    {{ end }}
+  </ol>
+</figure>

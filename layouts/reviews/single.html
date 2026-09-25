@@ -1,0 +1,62 @@
+{{ define "main" }}
+{{ $s := partial "func/scores.html" . }}
+{{ $data := index hugo.Data "scores" }}
+{{ $reviews := (where site.RegularPages "Section" "reviews").ByDate }}
+
+{{/* Older / newer neighbours by screening date. */}}
+{{ $older := false }}{{ $newer := false }}
+{{ range $i, $p := $reviews }}
+  {{ if eq $p $ }}
+    {{ if gt $i 0 }}{{ $older = index $reviews (sub $i 1) }}{{ end }}
+    {{ if lt (add $i 1) (len $reviews) }}{{ $newer = index $reviews (add $i 1) }}{{ end }}
+  {{ end }}
+{{ end }}
+
+<article class="review">
+  {{ partial "review/hero.html" (dict "page" . "scores" $s) }}
+
+  {{ with $s }}
+    <div class="review__scores wrap">
+      {{ partial "review/scorecard.html" (dict "scores" . "max" $data.max_total) }}
+      {{ partial "review/callouts.html" (dict "scores" .) }}
+    </div>
+  {{ else }}
+    <div class="wrap"><p class="pending mono">Scores pending — this film isn't in the ledger yet.</p></div>
+  {{ end }}
+
+  <div class="review__body wrap">
+    <section class="review__synopsis" aria-labelledby="synopsis-h" data-reveal>
+      <h2 id="synopsis-h" class="eyebrow">Plot synopsis</h2>
+      <div class="prose">{{ .Content }}</div>
+    </section>
+    <aside class="review__aside">
+      {{ partial "review/ballot.html" . }}
+    </aside>
+  </div>
+
+  {{ with $s }}
+    <div class="review__data wrap">
+      {{ partial "review/breakdown.html" (dict "scores" . "metrics" $data.metrics) }}
+      {{ partial "review/table.html" (dict "scores" . "metrics" $data.metrics "max" $data.max_total) }}
+    </div>
+  {{ end }}
+
+  <nav class="reelnav wrap" aria-label="More reviews">
+    {{ with $older }}
+      <a class="reelnav__link reelnav__link--prev" href="{{ .RelPermalink }}">
+        <span class="eyebrow">← Previous reel</span>
+        <span class="reelnav__title">{{ partial "func/title-html.html" .Title }}</span>
+      </a>
+    {{ end }}
+    {{ with $newer }}
+      <a class="reelnav__link reelnav__link--next" href="{{ .RelPermalink }}">
+        <span class="eyebrow">Next reel →</span>
+        <span class="reelnav__title">{{ partial "func/title-html.html" .Title }}</span>
+      </a>
+    {{ end }}
+  </nav>
+</article>
+
+{{ $others := first 12 (where $reviews.Reverse "RelPermalink" "ne" .RelPermalink) }}
+{{ partial "crate.html" (dict "pages" $others "id" "more" "kicker" "From the archive" "title" "Keep flipping" "more" (site.GetPage "/reviews")) }}
+{{ end }}

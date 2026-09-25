@@ -1,0 +1,15 @@
+{{/*
+  Editorial title setting: small connecting words ("The", "of", "and",
+  "di", "de"…) are set in italic so long titles get a typographic rhythm.
+  Input: string. Output: safe HTML.
+*/}}
+{{ $small := slice "the" "of" "and" "a" "an" "in" "de" "di" "la" "le" "du" "des" }}
+{{ $out := slice }}
+{{ range split . " " }}
+  {{ if in $small (lower .) }}
+    {{ $out = $out | append (printf "<em>%s</em>" (htmlEscape .)) }}
+  {{ else }}
+    {{ $out = $out | append (htmlEscape .) }}
+  {{ end }}
+{{ end }}
+{{ return (delimit $out " " | safeHTML) }}

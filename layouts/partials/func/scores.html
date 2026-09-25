@@ -1,0 +1,8 @@
+{{/*
+  Computed scores for a review page, from build/data/scores.json
+  (written by scripts/build_data.py). Joined on front matter `score_key`,
+  falling back to the title. Returns nil when the film isn't in the ledger.
+*/}}
+{{ $key := .Params.score_key | default .Title }}
+{{ $films := (index hugo.Data "scores").films }}
+{{ return index $films $key }}

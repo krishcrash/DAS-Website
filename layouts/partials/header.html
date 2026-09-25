@@ -1,0 +1,36 @@
+{{ $reviews := where site.RegularPages "Section" "reviews" }}
+<header class="masthead" data-masthead>
+  <div class="masthead__inner">
+    <a class="masthead__brand" href="{{ "/" | relURL }}" aria-label="{{ site.Title }} — home">
+      <span class="masthead__the">The</span>
+      <span class="masthead__name">Dead <em>Auteur</em> Society</span>
+    </a>
+
+    <p class="masthead__issue" aria-label="{{ len $reviews }} films reviewed">
+      <span>Reel</span> <strong>{{ printf "%03d" (len $reviews) }}</strong>
+    </p>
+
+    <button class="masthead__toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+      <span class="masthead__toggle-label">Menu</span>
+      <span class="masthead__toggle-icon" aria-hidden="true"><i></i><i></i></span>
+    </button>
+
+    <nav class="nav" id="site-nav" aria-label="Primary" data-nav>
+      <ol class="nav__list">
+        {{ $current := . }}
+        {{ range $i, $m := site.Menus.main }}
+          {{ $active := or ($current.IsMenuCurrent "main" $m) ($current.HasMenuCurrent "main" $m) }}
+          {{/* The Details sits under Analytics — don't light up both. */}}
+          {{ if and (eq $m.Name "Analytics") (eq $current.RelPermalink ("/analytics/details/" | relURL)) }}{{ $active = false }}{{ end }}
+          <li class="nav__item">
+            <a class="nav__link{{ if $active }} is-active{{ end }}" href="{{ $m.URL }}"{{ if $active }} aria-current="page"{{ end }}>
+              <span class="nav__num">{{ printf "%02d" (add $i 1) }}</span>
+              <span class="nav__label">{{ $m.Name }}</span>
+            </a>
+          </li>
+        {{ end }}
+      </ol>
+      <p class="nav__tagline">{{ site.Params.tagline }}</p>
+    </nav>
+  </div>
+</header>

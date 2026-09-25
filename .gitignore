@@ -1,0 +1,18 @@
+# Hugo output & cache
+/public/
+/resources/_gen/
+/.hugo_build.lock
+
+# Python pipeline output (regenerated on every build / in CI)
+/build/
+__pycache__/
+*.pyc
+.venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# WordPress export: migration input only, contains personal data — keep local
+/master-data/wordpress/*.xml

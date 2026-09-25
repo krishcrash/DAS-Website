@@ -1,0 +1,66 @@
+{{/*
+  Aspect-ratio-safe image frame. Posters, stills and banners arrive in every
+  shape, so each is placed into a fixed aperture and handled by how far its
+  own ratio is from the aperture's:
+
+    close enough (±tolerance, default 15%) → "cover": fills the frame, trims a sliver
+    too different       → "matte": shown whole, over a blurred, darkened
+                          copy of itself (like a still projected in a wider gate)
+    missing             → a typographic title card, so layouts never collapse
+
+  Params (dict):
+    page   Page     page context (for bundle lookups)
+    src    string   e.g. "images/posters/midsommar.jpg"
+    alt    string
+    ratio  string   CSS aspect-ratio for the aperture, default "2 / 3"
+    sizes  string   <img sizes>, default "(min-width: 900px) 33vw, 80vw"
+    title  string   fallback title-card text
+    eager  bool     load eagerly (for above-the-fold heroes)
+    class  string   extra classes
+    tolerance float relative ratio difference still treated as "cover" (default 0.15)
+    fit    string   force "cover" or "matte" regardless of ratio
+    focus  string   CSS object-position for cover crops, default "50% 30%"
+*/}}
+{{ $ratio := .ratio | default "2 / 3" }}
+{{ $parts := split (replace $ratio " " "") "/" }}
+{{ $frameAR := div (float (index $parts 0)) (float (index $parts 1)) }}
+{{ $sizes := .sizes | default "(min-width: 900px) 33vw, 80vw" }}
+{{ $img := partial "func/image.html" (dict "page" .page "path" .src) }}
+
+{{ if $img }}
+  {{ $imgAR := div (float $img.Width) (float $img.Height) }}
+  {{ $delta := div (math.Abs (sub $imgAR $frameAR)) $frameAR }}
+  {{ $mode := cond (le $delta (.tolerance | default 0.15)) "cover" "matte" }}
+  {{ with .fit }}{{ $mode = . }}{{ end }}
+  {{ $srcset := slice }}
+  {{ $fallback := "" }}
+  {{ $widths := slice }}
+  {{ range slice 360 640 960 }}{{ if lt . $img.Width }}{{ $widths = $widths | append . }}{{ end }}{{ end }}
+  {{ $widths = $widths | append (cond (lt $img.Width 1400) $img.Width 1400) }}
+  {{ range $w := $widths }}
+    {{ $r := $img.Resize (printf "%dx webp" $w) }}
+    {{ $srcset = $srcset | append (printf "%s %dw" $r.RelPermalink $w) }}
+    {{ $fallback = $r }}
+  {{ end }}
+  <figure class="frame frame--{{ $mode }} {{ .class }}" style="{{ printf "--ar: %s; --img-ar: %.4f; --focus: %s" $ratio $imgAR (.focus | default "50% 30%") | safeCSS }}">
+    {{ if eq $mode "matte" }}
+      {{ $matte := $img.Resize "48x webp q40" }}
+      <img class="frame__matte" src="{{ $matte.RelPermalink }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
+    {{ end }}
+    <img class="frame__img"
+         src="{{ $fallback.RelPermalink }}"
+         srcset="{{ delimit $srcset ", " }}"
+         sizes="{{ $sizes }}"
+         width="{{ $img.Width }}" height="{{ $img.Height }}"
+         alt="{{ .alt }}"
+         {{ if .eager }}loading="eager" fetchpriority="high"{{ else }}loading="lazy"{{ end }}
+         decoding="async">
+  </figure>
+{{ else }}
+  <figure class="frame frame--card {{ .class }}" style="{{ printf "--ar: %s" $ratio | safeCSS }}">
+    <figcaption class="frame__card">
+      <span class="edge">No print on file</span>
+      <span class="frame__card-title">{{ .title | default .alt }}</span>
+    </figcaption>
+  </figure>
+{{ end }}

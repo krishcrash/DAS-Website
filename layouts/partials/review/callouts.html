@@ -1,0 +1,59 @@
+{{/* Six highlight cards laid out like a contact sheet.
+     Context: dict "scores" <map> */}}
+{{ $s := .scores }}
+{{ $sdMax := 4.0 }}
+<section class="sheet" aria-labelledby="sheet-h">
+  <h2 id="sheet-h" class="visually-hidden">Highlights</h2>
+  <ol class="sheet__grid">
+    <li class="shot shot--rank" data-tilt data-reveal>
+      <div class="shot__inner">
+        <p class="shot__label"><span class="shot__num">1A</span> Rank</p>
+        <p class="shot__value"><span class="shot__hash">#</span>{{ $s.rank }}</p>
+        <p class="shot__sub">of {{ $s.rank_of }} films screened</p>
+      </div>
+    </li>
+    <li class="shot" data-tilt data-reveal>
+      <div class="shot__inner">
+        <p class="shot__label"><span class="shot__num">2A</span> Top category</p>
+        {{ with $s.top_category }}
+          <p class="shot__value shot__value--word">{{ .label }}</p>
+          <p class="shot__sub">{{ .pct }}% of the category max</p>
+        {{ end }}
+      </div>
+    </li>
+    <li class="shot shot--consensus shot--{{ $s.consensus.level }}" data-tilt data-reveal>
+      <div class="shot__inner">
+        <p class="shot__label"><span class="shot__num">3A</span> Consensus</p>
+        <p class="shot__value shot__value--word">{{ $s.consensus.label }}</p>
+        <div class="spread" role="img" aria-label="Spread of reviewer totals: standard deviation {{ $s.consensus.sd }}">
+          <span class="spread__band spread__band--agree"></span>
+          <span class="spread__band spread__band--debate"></span>
+          <span class="spread__band spread__band--controversial"></span>
+          <span class="spread__pin" style="{{ printf "--p: %.4f" (math.Min 1 (div $s.consensus.sd $sdMax)) | safeCSS }}"></span>
+        </div>
+        <p class="shot__sub">σ {{ $s.consensus.sd }} across reviewer totals</p>
+      </div>
+    </li>
+    <li class="shot" data-tilt data-reveal>
+      <div class="shot__inner">
+        <p class="shot__label"><span class="shot__num">4A</span> The Fan</p>
+        <p class="shot__value shot__value--word">{{ $s.fan.name }}</p>
+        <p class="shot__sub">Highest total · {{ $s.fan.total }}</p>
+      </div>
+    </li>
+    <li class="shot" data-tilt data-reveal>
+      <div class="shot__inner">
+        <p class="shot__label"><span class="shot__num">5A</span> The Cynic</p>
+        <p class="shot__value shot__value--word">{{ $s.cynic.name }}</p>
+        <p class="shot__sub">Lowest total · {{ $s.cynic.total }}</p>
+      </div>
+    </li>
+    <li class="shot" data-tilt data-reveal>
+      <div class="shot__inner">
+        <p class="shot__label"><span class="shot__num">6A</span> The Specialist</p>
+        <p class="shot__value shot__value--word">{{ $s.specialist.name }}</p>
+        <p class="shot__sub">{{ $s.specialist.label }} · {{ $s.specialist.pct }}% of max</p>
+      </div>
+    </li>
+  </ol>
+</section>

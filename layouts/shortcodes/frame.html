@@ -1,0 +1,9 @@
+{{/* Inline still inside a review: {{< frame src="images/banners/x.jpg" alt="…" ratio="2.39 / 1" >}} */}}
+{{ partial "frame.html" (dict
+  "page" .Page
+  "src" (.Get "src")
+  "alt" (.Get "alt")
+  "ratio" (.Get "ratio" | default "1.85 / 1")
+  "sizes" "(min-width: 900px) 38rem, 92vw"
+  "title" (.Get "alt")
+) }}

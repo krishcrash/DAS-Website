@@ -1,0 +1,3 @@
+{{/* Member display name from a user code: partial "func/member.html" "KS" → "Krishan" */}}
+{{ $m := index (index hugo.Data "scores").members . }}
+{{ return cond (ne $m nil) $m.name . }}

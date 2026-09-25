@@ -1,0 +1,33 @@
+{{/* The month's shortlist, as a ballot. Context: Page */}}
+{{ $noms := .Params.nominations }}
+{{ with $noms }}
+  {{ $hasVotes := false }}
+  {{ $maxVotes := 1 }}
+  {{ range . }}{{ if ne .votes nil }}{{ $hasVotes = true }}{{ $maxVotes = math.Max $maxVotes .votes }}{{ end }}{{ end }}
+  {{ $sorted := cond $hasVotes (sort . "votes" "desc") . }}
+  {{/* Winner first: they're the film on this page. */}}
+  {{/* A real tie-break: the screened film's votes equal the best of the rest.
+       (WordPress's "*" marked picks generally, so it isn't trusted alone.) */}}
+  {{ $runnerUp := -1 }}
+  {{ range where . "winner" "ne" true }}{{ if ne .votes nil }}{{ $runnerUp = math.Max $runnerUp .votes }}{{ end }}{{ end }}
+  {{ $sorted = (where $sorted "winner" true) | append (where $sorted "winner" "ne" true) }}
+  <section class="ballot" aria-labelledby="ballot-h">
+    <h2 id="ballot-h" class="eyebrow">The ballot</h2>
+    <ol class="ballot__list">
+      {{ range $sorted }}
+        <li class="ballot__item{{ if .winner }} is-winner{{ end }}">
+          <span class="ballot__film">{{ .film }}</span>
+          {{ if ne .votes nil }}
+            <span class="ballot__bar" aria-hidden="true" style="{{ printf "--p: %.4f" (div (float .votes) $maxVotes) | safeCSS }}"></span>
+            <span class="ballot__votes">{{ .votes }}<span class="visually-hidden"> vote{{ if ne .votes 1 }}s{{ end }}</span></span>
+          {{ else if .nominated_by }}
+            <span class="ballot__by">{{ partial "func/member.html" .nominated_by }}'s pick</span>
+          {{ end }}
+          {{ if .winner }}
+            <span class="ballot__tag">Screened{{ if and (ne .votes nil) (eq (float .votes) (float $runnerUp)) }} · won tie-break{{ end }}</span>
+          {{ end }}
+        </li>
+      {{ end }}
+    </ol>
+  </section>
+{{ end }}

@@ -1,0 +1,31 @@
+# The scoring guide. Maximums come from master-data/max_ratings.csv; this file
+# holds the words. Used by /scoring/, the submit form and review pages.
+intro: >-
+  Every member scores every film across eight categories, for a best possible
+  total of 11.5. Nearly half of that rides on one question: did you enjoy it?
+categories:
+  enjoyable:
+    range: "0 or 5"
+    binary: true
+    description: "Binary (either 0 or 5) based on whether the film was overall enjoyable."
+  plot:
+    range: "0 – 2"
+    description: "Scoring how well you believe the plot was. Were there plot holes? Did parts not make sense?"
+  acting:
+    range: "0 – 1.5"
+    description: "Was the acting perfect – what are some of the flaws?"
+  camera:
+    range: "0 – 1"
+    description: "Includes all aspects of the actual filming of the movie. Were there any cool shots?"
+  themes:
+    range: "0 – 0.5"
+    description: "Recurring ideas or thoughts. Is the film narrative actually discussing something, and does the production of the film match that narrative? What's the dramatic question? Is the message clear?"
+  music:
+    range: "0 – 0.5"
+    description: "Did the music add to the film?"
+  casting:
+    range: "0 – 0.5"
+    description: "Were there any actors that you think would have fit the role better than the ones cast?"
+  wildcard:
+    range: "−0.5 to +0.5"
+    description: "A wildcard of your choice – an extra discussion point for something you think is notable. Would you watch the film again? Was it interesting?"

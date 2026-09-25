@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="{{ site.Language.Locale | default "en" }}">
+<head>
+  {{ partial "head.html" . }}
+</head>
+<body class="{{ block "bodyclass" . }}page--{{ .Kind }}{{ with .Section }} section--{{ . }}{{ end }}{{ end }}">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  {{/* Page-level film atmosphere: grain, light leaks, sprocket rails, letterbox bars. */}}
+  {{ partial "atmosphere.html" . }}
+
+  {{ partial "header.html" . }}
+
+  <main id="main" class="reel" tabindex="-1">
+    {{ block "main" . }}{{ end }}
+  </main>
+
+  {{ partial "footer.html" . }}
+
+  {{ $js := resources.Get "js/main.js" | js.Build (dict "minify" hugo.IsProduction "target" "es2019") }}
+  {{ if hugo.IsProduction }}{{ $js = $js | fingerprint }}{{ end }}
+  <script src="{{ $js.RelPermalink }}" defer {{ with $js.Data.Integrity }}integrity="{{ . }}"{{ end }}></script>
+  {{ block "scripts" . }}{{ end }}
+</body>
+</html>
