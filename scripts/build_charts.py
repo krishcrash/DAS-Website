@@ -127,6 +127,9 @@ def bar_height(n: int) -> int:
 
 def load():
     raw = pd.read_csv(MASTER / "ratings_by_metric.csv")
+    # Blank scores are placeholders (not submitted yet) — see build_data.py.
+    raw["Score"] = pd.to_numeric(raw["Score"], errors="coerce")
+    raw = raw.dropna(subset=["Score"])
     raw["date"] = pd.to_datetime(raw["date"], format="%d/%m/%Y")
     raw["Metric"] = raw["Metric"].str.strip().str.lower()
 

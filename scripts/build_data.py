@@ -52,8 +52,20 @@ def r2(x: float) -> float:
     return float(Decimal(repr(float(x))).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
 
 
+def drop_blank_scores(ratings: pd.DataFrame, announce: bool = True) -> pd.DataFrame:
+    """Skip rows with no score yet (placeholders for members who haven't
+    submitted), so they don't count as a reviewer scoring 0."""
+    ratings["Score"] = pd.to_numeric(ratings["Score"], errors="coerce")
+    blank = ratings[ratings["Score"].isna()]
+    if announce and not blank.empty:
+        for (movie, user), rows in blank.groupby(["movie", "user"]):
+            print(f"::warning::{user} has no score yet for {rows['Metric'].nunique()} "
+                  f"categor{'y' if rows['Metric'].nunique() == 1 else 'ies'} of '{movie}' — skipped until filled in")
+    return ratings.dropna(subset=["Score"])
+
+
 def load_ledger() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    ratings = pd.read_csv(MASTER / "ratings_by_metric.csv")
+    ratings = drop_blank_scores(pd.read_csv(MASTER / "ratings_by_metric.csv"))
     ratings["date"] = pd.to_datetime(ratings["date"], format="%d/%m/%Y")
     ratings["Metric"] = ratings["Metric"].str.strip().str.lower()
 
