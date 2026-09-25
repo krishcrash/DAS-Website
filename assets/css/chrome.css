@@ -29,6 +29,13 @@
   display: flex;
   align-items: center;
   gap: var(--s-5);
+  transition: height var(--dur-med) var(--ease-out);
+}
+/* Phones/tablets: tighten the floating bar once the page is scrolled */
+@media (max-width: 1179px) {
+  .masthead.is-scrolled .masthead__inner { height: var(--masthead-compact); }
+  .masthead__name { transition: font-size var(--dur-med) var(--ease-out); }
+  .masthead.is-scrolled .masthead__name { font-size: 1.05rem; }
 }
 
 .masthead__brand {

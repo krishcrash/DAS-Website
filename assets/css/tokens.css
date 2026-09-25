@@ -64,7 +64,9 @@
   --rail-w: 0px;                         /* sprocket rails switch on at ≥1100px */
   --measure: 38rem;                      /* comfortable reading line */
   --max-w: 92rem;
-  --masthead-h: 4.25rem;
+  --masthead-h: 3.5rem;
+  --masthead-compact: 3rem;              /* height once scrolled, on menu-button screens */
+  --masthead-sticky: var(--masthead-compact); /* what sticky things sit under */
 
   /* Motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -88,6 +90,10 @@
 
 @media (min-width: 1100px) {
   :root { --rail-w: 2.25rem; --masthead-h: 5rem; }
+}
+
+@media (min-width: 1180px) {
+  :root { --masthead-sticky: var(--masthead-h); }   /* desktop header doesn't shrink */
 }
 
 @media (prefers-reduced-motion: reduce) {

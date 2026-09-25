@@ -30,7 +30,7 @@
 
 .archive__toolbar {
   position: sticky;
-  top: var(--masthead-h);
+  top: var(--masthead-sticky);
   z-index: 20;
   display: grid;
   gap: var(--s-2);
@@ -40,6 +40,10 @@
   -webkit-backdrop-filter: blur(12px);
           backdrop-filter: blur(12px);
   border-block: 1px solid var(--ink-3);
+}
+/* On phones the two chip rows are too tall to pin under the header */
+@media (max-width: 699px) {
+  .archive__toolbar { position: static; }
 }
 .archive__group {
   display: flex;

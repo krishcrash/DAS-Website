@@ -7,7 +7,7 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  scroll-padding-top: calc(var(--masthead-h) + 1rem);
+  scroll-padding-top: calc(var(--masthead-sticky) + 1rem);
   background: var(--ink-0);
 }
 
