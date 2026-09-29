@@ -1,7 +1,7 @@
 ---
 title: "Son of the White Mare"
 date: 2026-09-29             # screening date, YYYY-MM-DD; newest date = home page hero
-score_key: "on of the White Mare"    # must match the film name in the CSV exactly
+score_key: "Son of the White Mare"    # must match the film name in the CSV exactly
 director: "Marcell Jankovics"
 year: 1981
 nominator: "KS"              # member CODE here (the CSV uses the full name)
