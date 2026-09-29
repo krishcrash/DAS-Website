@@ -223,6 +223,14 @@ date,user,movie,list_user,Metric,metric_order,Score
 20/09/2022,YA,Shoplifters,Zelie,music,6,0.1
 20/09/2022,YA,Shoplifters,Zelie,casting,7,0.5
 20/09/2022,YA,Shoplifters,Zelie,wildcard,8,0.2
+20/09/2022,MA,Shoplifters,Zelie,enjoyable,1,5
+20/09/2022,MA,Shoplifters,Zelie,plot,2,1.5
+20/09/2022,MA,Shoplifters,Zelie,acting,3,1.5
+20/09/2022,MA,Shoplifters,Zelie,camera,4,0.7
+20/09/2022,MA,Shoplifters,Zelie,themes,5,0.5
+20/09/2022,MA,Shoplifters,Zelie,music,6,0.3
+20/09/2022,MA,Shoplifters,Zelie,casting,7,0.5
+20/09/2022,MA,Shoplifters,Zelie,wildcard,8,0.2
 20/09/2022,ZA,Shoplifters,Zelie,enjoyable,1,5
 20/09/2022,ZA,Shoplifters,Zelie,plot,2,1.9
 20/09/2022,ZA,Shoplifters,Zelie,acting,3,1.5
@@ -1511,14 +1519,14 @@ date,user,movie,list_user,Metric,metric_order,Score
 22/06/2026,KS,No Country For Old Men,Muhammad,music,6,0.2
 22/06/2026,KS,No Country For Old Men,Muhammad,casting,7,0.5
 22/06/2026,KS,No Country For Old Men,Muhammad,wildcard,8,0.1
-11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,enjoyable,1,
-11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,plot,2,
-11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,acting,3,
-11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,camera,4,
-11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,themes,5,
-11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,music,6,
-11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,casting,7,
-11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,wildcard,8,
+11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,enjoyable,1,5
+11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,plot,2,1.6
+11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,acting,3,1.1
+11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,camera,4,0.7
+11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,themes,5,0.4
+11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,music,6,0.25
+11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,casting,7,0.4
+11/08/2026,YA,Eternal Sunshine of the Spotless Mind,Yasin,wildcard,8,-0.25
 11/08/2026,RB,Eternal Sunshine of the Spotless Mind,Yasin,enjoyable,1,5
 11/08/2026,RB,Eternal Sunshine of the Spotless Mind,Yasin,plot,2,1.2
 11/08/2026,RB,Eternal Sunshine of the Spotless Mind,Yasin,acting,3,1.2
@@ -1559,3 +1567,51 @@ date,user,movie,list_user,Metric,metric_order,Score
 11/08/2026,KS,Eternal Sunshine of the Spotless Mind,Yasin,music,6,0
 11/08/2026,KS,Eternal Sunshine of the Spotless Mind,Yasin,casting,7,0.3
 11/08/2026,KS,Eternal Sunshine of the Spotless Mind,Yasin,wildcard,8,0
+29/09/2026,RB,Son of the White Mare,Krishan,enjoyable,1,0
+29/09/2026,RB,Son of the White Mare,Krishan,plot,2,0.5
+29/09/2026,RB,Son of the White Mare,Krishan,acting,3,0.3
+29/09/2026,RB,Son of the White Mare,Krishan,camera,4,0.9
+29/09/2026,RB,Son of the White Mare,Krishan,themes,5,0.2
+29/09/2026,RB,Son of the White Mare,Krishan,music,6,0.2
+29/09/2026,RB,Son of the White Mare,Krishan,casting,7,0.1
+29/09/2026,RB,Son of the White Mare,Krishan,wildcard,8,0.5
+29/09/2026,SE,Son of the White Mare,Krishan,enjoyable,1,0
+29/09/2026,SE,Son of the White Mare,Krishan,plot,2,1.3
+29/09/2026,SE,Son of the White Mare,Krishan,acting,3,0.8
+29/09/2026,SE,Son of the White Mare,Krishan,camera,4,0.8
+29/09/2026,SE,Son of the White Mare,Krishan,themes,5,0.5
+29/09/2026,SE,Son of the White Mare,Krishan,music,6,0.3
+29/09/2026,SE,Son of the White Mare,Krishan,casting,7,0.3
+29/09/2026,SE,Son of the White Mare,Krishan,wildcard,8,0.5
+29/09/2026,ZA,Son of the White Mare,Krishan,enjoyable,1,0
+29/09/2026,ZA,Son of the White Mare,Krishan,plot,2,0.25
+29/09/2026,ZA,Son of the White Mare,Krishan,acting,3,0.5
+29/09/2026,ZA,Son of the White Mare,Krishan,camera,4,0.5
+29/09/2026,ZA,Son of the White Mare,Krishan,themes,5,0.2
+29/09/2026,ZA,Son of the White Mare,Krishan,music,6,0.1
+29/09/2026,ZA,Son of the White Mare,Krishan,casting,7,0.25
+29/09/2026,ZA,Son of the White Mare,Krishan,wildcard,8,-0.1
+29/09/2026,MA,Son of the White Mare,Krishan,enjoyable,1,0
+29/09/2026,MA,Son of the White Mare,Krishan,plot,2,1
+29/09/2026,MA,Son of the White Mare,Krishan,acting,3,.5
+29/09/2026,MA,Son of the White Mare,Krishan,camera,4,.8
+29/09/2026,MA,Son of the White Mare,Krishan,themes,5,.35
+29/09/2026,MA,Son of the White Mare,Krishan,music,6,.2
+29/09/2026,MA,Son of the White Mare,Krishan,casting,7,.3
+29/09/2026,MA,Son of the White Mare,Krishan,wildcard,8,0.5
+29/09/2026,YA,Son of the White Mare,Krishan,enjoyable,1,0
+29/09/2026,YA,Son of the White Mare,Krishan,plot,2,0.75
+29/09/2026,YA,Son of the White Mare,Krishan,acting,3,0.3
+29/09/2026,YA,Son of the White Mare,Krishan,camera,4,0.8
+29/09/2026,YA,Son of the White Mare,Krishan,themes,5,0.2
+29/09/2026,YA,Son of the White Mare,Krishan,music,6,0.2
+29/09/2026,YA,Son of the White Mare,Krishan,casting,7,0.1
+29/09/2026,YA,Son of the White Mare,Krishan,wildcard,8,0.5
+29/09/2026,KS,Son of the White Mare,Krishan,enjoyable,1,0
+29/09/2026,KS,Son of the White Mare,Krishan,plot,2,0.7
+29/09/2026,KS,Son of the White Mare,Krishan,acting,3,0.7
+29/09/2026,KS,Son of the White Mare,Krishan,camera,4,1
+29/09/2026,KS,Son of the White Mare,Krishan,themes,5,0.3
+29/09/2026,KS,Son of the White Mare,Krishan,music,6,0.2
+29/09/2026,KS,Son of the White Mare,Krishan,casting,7,0.25
+29/09/2026,KS,Son of the White Mare,Krishan,wildcard,8,0.2
