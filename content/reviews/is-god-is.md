@@ -16,7 +16,7 @@ nominations:
   - film: "Is God Is"
     votes: 2
     winner: true
-poster: "images/posters/is-god-is.jpeg"
+poster: "images/posters/is-god-is.jpg"
 draft: false                 # must be false or the page stays hidden
 ---
 Is God Is (written by Aleshea Harris) is a darkly comic, high-octane modern myth and revenge tragedy that blends elements of the Spaghetti Western, Afropunk, and epic Greek drama.
