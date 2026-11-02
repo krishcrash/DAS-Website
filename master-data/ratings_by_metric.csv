@@ -1615,3 +1615,35 @@ date,user,movie,list_user,Metric,metric_order,Score
 29/09/2026,KS,Son of the White Mare,Krishan,music,6,0.2
 29/09/2026,KS,Son of the White Mare,Krishan,casting,7,0.25
 29/09/2026,KS,Son of the White Mare,Krishan,wildcard,8,0.2
+26/10/2026,ZA,Is God Is,Zelie,enjoyable,1,5
+26/10/2026,ZA,Is God Is,Zelie,plot,2,0.9
+26/10/2026,ZA,Is God Is,Zelie,acting,3,1
+26/10/2026,ZA,Is God Is,Zelie,camera,4,0.5
+26/10/2026,ZA,Is God Is,Zelie,themes,5,0.3
+26/10/2026,ZA,Is God Is,Zelie,music,6,0.4
+26/10/2026,ZA,Is God Is,Zelie,casting,7,0.3
+26/10/2026,ZA,Is God Is,Zelie,wildcard,8,0
+26/10/2026,KS,Is God Is,Zelie,enjoyable,1,0
+26/10/2026,KS,Is God Is,Zelie,plot,2,0.7
+26/10/2026,KS,Is God Is,Zelie,acting,3,1.2
+26/10/2026,KS,Is God Is,Zelie,camera,4,0.7
+26/10/2026,KS,Is God Is,Zelie,themes,5,0.2
+26/10/2026,KS,Is God Is,Zelie,music,6,0.5
+26/10/2026,KS,Is God Is,Zelie,casting,7,0.5
+26/10/2026,KS,Is God Is,Zelie,wildcard,8,0.5
+26/10/2026,YA,Is God Is,Zelie,enjoyable,1,5
+26/10/2026,YA,Is God Is,Zelie,plot,2,0.9
+26/10/2026,YA,Is God Is,Zelie,acting,3,1
+26/10/2026,YA,Is God Is,Zelie,camera,4,0.8
+26/10/2026,YA,Is God Is,Zelie,themes,5,0.3
+26/10/2026,YA,Is God Is,Zelie,music,6,0.4
+26/10/2026,YA,Is God Is,Zelie,casting,7,0.4
+26/10/2026,YA,Is God Is,Zelie,wildcard,8,-0.25
+26/10/2026,RB,Is God Is,Zelie,enjoyable,1,5
+26/10/2026,RB,Is God Is,Zelie,plot,2,0.9
+26/10/2026,RB,Is God Is,Zelie,acting,3,1
+26/10/2026,RB,Is God Is,Zelie,camera,4,0.5
+26/10/2026,RB,Is God Is,Zelie,themes,5,0.25
+26/10/2026,RB,Is God Is,Zelie,music,6,0.3
+26/10/2026,RB,Is God Is,Zelie,casting,7,0.4
+26/10/2026,RB,Is God Is,Zelie,wildcard,8,-0.25
